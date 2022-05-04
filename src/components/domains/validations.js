@@ -41,7 +41,7 @@ const asignar_idiomas_formatos_datosSchema = Joi.object().keys({
 })
 const asignar_billetera_movil_schema = Joi.object().keys({
     nombre: Joi.string().required().lowercase(),
-    monto_cobro: Joi.number().required().min(0),
+    monto_cobrar: Joi.number().required().min(0),
     monto_alerta: Joi.number().required().min(0),
     monto_porcentaje_venta: Joi.number().required().min(0),
     frecuencia: Joi.string().required().lowercase().valid("dias", "semanas", "meses", "anos"),

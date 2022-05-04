@@ -8,6 +8,9 @@ const controller = require("./controller");
 router.post("/registro", UserAuth, controller.asignar_dominio);
 
 router.put("/billetera-movil", UserAuth, controller.asignar_billetera_movil);
+router.get("/billetera-movil/pagos", controller.generar_pagos_billetera_movil);
+
+router.put("/movimientos/comision", controller.generar_movimientos_comision_venta);
 
 router.get("/perfil/obtener", UserAuth, controller.obtener_perfil);
 

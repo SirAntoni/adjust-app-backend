@@ -11,6 +11,7 @@ const esquema = new Schema({
     motivo: { type: String },
     observacion: { type: String },
 
+    origen: { type: String },
     dominio: { type: String },
 
     moneda: { type: String },
@@ -28,4 +29,4 @@ const esquema = new Schema({
     fecha_modificacion: { type: String }
 });
 
-module.exports.modelo = mongoose.model("billetera_movil", esquema, "billetera_movil");
+module.exports.modelo = mongoose.model("movimientos", esquema, "movimientos");

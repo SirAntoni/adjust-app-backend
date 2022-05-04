@@ -1,8 +1,8 @@
 const dominioDao = require("./dao");
+const controlador_transacion = require("../transactions/controller");
 
 const { respuesta_envio_api } = require("../../utils/error");
-const { auth_values_signature } = require("../../utils/secrets");
-const { validar_asignar_perfil_contacto, validar_asignar_perfil_tienda, validar_asignar_idiomas_formatos_datos, validar_asignar_facturacion_datos, validar_asignar_perfil_facturacion } = require("./validations");
+const { validar_asignar_perfil_contacto, validar_asignar_perfil_tienda, validar_asignar_idiomas_formatos_datos, validar_asignar_facturacion_datos, validar_asignar_perfil_facturacion, validar_asignar_billetera_movil } = require("./validations");
 
 async function  asignar_dominio(valores){
     try {
@@ -467,40 +467,166 @@ async function  asignar_billetera_movil(valores_datos, valores_usuario){
             nombre
         }
 
-        const existe_dominio = await dominioDao.existe_dominio(datos_buscar);
+        const existe_dominio = await dominioDao.existe_dominio_venta_dominio(datos_buscar);
 
         if(existe_dominio){
-            const { monto_cobro, monto_fin, monto_porcentaje_venta, frecuencia, frecuencia_numero, pasarela } = valores_datos;
-            const { _id } = valores_usuario;
-            const fecha_generada = new Date().toISOString();
-
+            const { monto_cobrar, monto_alerta, monto_porcentaje_venta, frecuencia, frecuencia_numero } = valores_datos;
+            // const { _id } = valores_usuario;
+            const fecha_generada = new Date();
+            let nueva_fecha = new Date(fecha_generada);
+            nueva_fecha = new Date(nueva_fecha.setHours(0, 0, 0, 0));
+            let proximo_cobro;
+            switch(frecuencia){
+                case 'dias':
+                    proximo_cobro = new Date(nueva_fecha.setDate(nueva_fecha.getDate() + frecuencia_numero));
+                break;
+                case 'semanas':
+                    proximo_cobro = new Date(nueva_fecha.setDate(nueva_fecha.getDate() + frecuencia_numero*7));
+                break;
+                case 'meses':
+                    proximo_cobro = new Date(nueva_fecha.setMonth(nueva_fecha.getMonth() + frecuencia_numero));
+                break;
+                case 'anos':
+                    proximo_cobro = new Date(nueva_fecha.setFullYear(nueva_fecha.getFullYear() + frecuencia_numero));
+                break;
+                                        
+            }
             const datos_asignar = {
-                "billetera_movil.monto_cobro": monto_cobro,
-                "billetera_movil.monto_fin": monto_fin,
-                "billetera_movil.monto_porcentaje_venta": monto_porcentaje_venta,
-                "billetera_movil.frecuencia": frecuencia,
-                "billetera_movil.frecuencia_numero": frecuencia_numero,
-                "billetera_movil.pasarela": pasarela,
+                tipo_pago: "prepago",
+                billetera_movil: {
+                    monto_cobrar: monto_cobrar.toFixed(2),
+                    saldo: 0.00,
+                    //monto_pagado: 0.00,
+                    monto_alerta: monto_alerta.toFixed(2),
+                    monto_porcentaje_venta: (monto_porcentaje_venta/100).toFixed(2),
+                    frecuencia: frecuencia,
+                    frecuencia_numero: frecuencia_numero,
+                    //"billetera_movil.pasarela": pasarela,
+                    fecha_cobro_inicial: proximo_cobro.toISOString(),
+                    proximo_cobro: proximo_cobro.toISOString()
+                },
 
-                "billetera_movil.estado": "activo",
-
-                usuario_modificacion: _id,
-                fecha_modificacion: fecha_generada
+                //usuario_modificacion: _id,
+                situacion: "activo",
+                fecha_modificacion: fecha_generada.toISOString()
             }
 
             const datos_buscar_dominio = {
-                _id: existe_dominio._id
+                nombre
             }
 
             const resultado_asignar_dominio = await dominioDao.actualizar_dominio(datos_buscar_dominio, datos_asignar);
 
             if(resultado_asignar_dominio){
-                return respuesta_envio_api( true, "SUCCESS", "Se realizo correctamente", []);
+                return respuesta_envio_api( true, "SUCCESS", "Se realizo correctamente", null);
             }
             return respuesta_envio_api( false, "ERROR_ASIGNAR_DOMINIO", "No se logro procesar", []);
         }
         else{
             return respuesta_envio_api( false, "ERROR_EXISTE_DOMINIO", "El dominio ya existe", []);
+        }
+    } catch (err) {
+        throw new Error(err);
+    }
+}
+async function actualizar_billetera_movil(valores_datos){
+    try {
+        let { nombre } = valores_datos;
+
+        nombre = nombre ? nombre.toLowerCase() : "";
+        nombre = nombre.replace("www.", "");
+
+        const datos_buscar = {
+            nombre
+        }
+
+        const existe_dominio = await dominioDao.existe_dominio_venta_dominio_venta_recurrente(datos_buscar);
+
+        if(existe_dominio){
+            const { saldo, frecuencia, frecuencia_numero } = existe_dominio.billetera_movil;
+            // const { _id } = valores_usuario;
+            const fecha_generada = new Date();
+            let nueva_fecha = new Date(fecha_generada);
+            nueva_fecha = new Date(nueva_fecha.setHours(0, 0, 0, 0));
+            let proximo_cobro;
+            switch(frecuencia){
+                case 'dias':
+                    proximo_cobro = new Date(nueva_fecha.setDate(nueva_fecha.getDate() + frecuencia_numero));
+                break;
+                case 'semanas':
+                    proximo_cobro = new Date(nueva_fecha.setDate(nueva_fecha.getDate() + frecuencia_numero*7));
+                break;
+                case 'meses':
+                    proximo_cobro = new Date(nueva_fecha.setMonth(nueva_fecha.getMonth() + frecuencia_numero));
+                break;
+                case 'anos':
+                    proximo_cobro = new Date(nueva_fecha.setFullYear(nueva_fecha.getFullYear() + frecuencia_numero));
+                break;
+                                        
+            }
+            const datos_asignar = {
+                "billetera_movil.proximo_cobro": proximo_cobro.toISOString(),
+                fecha_modificacion: fecha_generada.toISOString()
+            }
+            const datos_buscar_dominio = {
+                nombre
+            }
+
+            const resultado_asignar_dominio = await dominioDao.actualizar_dominio(datos_buscar_dominio, datos_asignar);
+            return resultado_asignar_dominio;
+        }
+        else{
+            return false;
+        }
+    } catch (err) {
+        throw new Error(err);
+    }
+}
+async function actualizar_billetera_movil_datos(valores_datos){
+    try {
+        let { nombre, monto, fecha_modificacion } = valores_datos;
+
+        nombre = nombre ? nombre.toLowerCase() : "";
+        nombre = nombre.replace("www.", "");
+
+        const datos_buscar = {
+            nombre
+        }
+
+        const existe_dominio = await dominioDao.existe_dominio_venta_dominio_venta_recurrente(datos_buscar);
+
+        if(existe_dominio){
+            const { saldo } = existe_dominio.billetera_movil;
+            // const { _id } = valores_usuario;
+            const saldo_actual = parseFloat(saldo) + parseFloat(monto);
+            if(saldo_actual > 0){
+                const datos_asignar = {
+                    "billetera_movil.saldo": saldo_actual,
+                    fecha_modificacion
+                }
+                const datos_buscar_dominio = {
+                    nombre
+                }
+    
+                const resultado_asignar_dominio = await dominioDao.actualizar_dominio(datos_buscar_dominio, datos_asignar);
+                return resultado_asignar_dominio;
+            }
+            else{
+                const datos_asignar = {
+                    "billetera_movil.saldo": saldo_actual,
+                    estado: "parcial",
+                    fecha_modificacion
+                }
+                const datos_buscar_dominio = {
+                    nombre
+                }
+    
+                const resultado_asignar_dominio = await dominioDao.actualizar_dominio(datos_buscar_dominio, datos_asignar);
+                return resultado_asignar_dominio;
+            }
+        }
+        else{
+            return false;
         }
     } catch (err) {
         throw new Error(err);
@@ -516,23 +642,82 @@ async function  generar_pagos_billetera_movil(){
 
         for(var i= 0; i < existe_dominio.length; i++){
             const datos = existe_dominio[i];
-            const { nombre, billetera_movil } = datos;
-            const { monto_cobro, monto_alerta, monto_total, monto_pagado, monto_porcentaje_venta, frecuencia, frecuencia_numero, proximo_cobro } = billetera_movil;
+            const { nombre, moneda_codigo, billetera_movil } = datos;
+            let { monto_cobrar, proximo_cobro } = billetera_movil;
+            const fecha_generada = new Date();
+            proximo_cobro = new Date(proximo_cobro);
+            if(fecha_generada >= proximo_cobro){
+                const datos_asignar_transaccion = {
+                    origen : nombre,
+                    dominio: nombre,
 
-            if(monto_total > monto_pagado){
-                const fecha_generada = new Date().toISOString();
-                if(proximo_cobro === fecha_generada){
-
+                    tipo_movimiento: "ingreso",
+                    dominio: nombre,
+                    motivo: "Cobro prepago",
+                    observacion: "Cobro prepago de dominio",
+                    moneda: moneda_codigo,
+                    monto: monto_cobrar.toFixed(2)
+                    //monto_tipo_cambio
                 }
-            }            
-            const resultado_asignar_dominio = await dominioDao.actualizar_dominio(datos_buscar_dominio, datos_asignar);
+                const resultado_asignar_transaccion = await controlador_transacion.agregar_datos(datos_asignar_transaccion, null);
+                if(resultado_asignar_transaccion){
+                    const datos_actualizar = {
+                        nombre,
+                        //monto: monto_cobrar.toFixed(2)
+                    }
+                    const resultado_actualizar_billetera_movil = await actualizar_billetera_movil(datos_actualizar);
+                    // if(resultado_actualizar_billetera_movil && monto_pagado >= monto_alerta){
+                    //     const datos_email = {
+                    //         correo,
+                    //         dominio: nombre
+                    //     }
+                    //     const resultado_email = await userDao.enviar_correo_alerta_transaccion(datos_email);
 
-            if(resultado_asignar_dominio){
-                return respuesta_envio_api( true, "SUCCESS", "Se realizo correctamente", []);
+                    //     // if(resultado_email != true){
+                    //     //     return respuesta_envio_api( false, "ERROR_ASIGNAR_DOMINIO", "No se logro procesar", null);
+                    //     // }
+                    // }
+                    // return respuesta_envio_api( true, "SUCCESS", "Se realizo correctamente", null);
+                }
+                // return respuesta_envio_api( false, "ERROR_ASIGNAR_DOMINIO", "No se logro procesar", null);
             }
-            return respuesta_envio_api( false, "ERROR_ASIGNAR_DOMINIO", "No se logro procesar", []);
         }
-        return respuesta_envio_api( false, "ERROR_EXISTE_DOMINIO", "El dominio ya existe", []);
+        return respuesta_envio_api( true, "SUCCESS", "Se realizo correctamente", null);
+    } catch (err) {
+        throw new Error(err);
+    }
+}
+async function  generar_movimientos_comision_venta(valores_datos){
+    try {
+        let { dominio, observacion, monto} = valores_datos;
+        const datos_buscar = {
+            nombre: dominio
+        }
+
+        const existe_dominio = await dominioDao.buscar_dominio_movimiento(datos_buscar);
+
+        if(existe_dominio){
+            const { nombre, moneda_codigo, billetera_movil } = existe_dominio;
+            const { monto_porcentaje_venta } = billetera_movil;
+            monto = monto * monto_porcentaje_venta;
+            const datos_asignar_transaccion = {
+                origen : nombre,
+                dominio: nombre,
+
+                tipo_movimiento: "egreso",
+                motivo: "Comision por venta",
+                observacion,
+                moneda: moneda_codigo,
+                monto: monto.toFixed(2)
+                //monto_tipo_cambio
+            }
+            const resultado_asignar_transaccion = await controlador_transacion.agregar_datos(datos_asignar_transaccion, null);
+            if(resultado_asignar_transaccion){
+                return respuesta_envio_api( true, "SUCCESS", "Se realizo correctamente", null);
+            }
+            return respuesta_envio_api( false, "ERROR_ASIGNAR_DOMINIO", "No se logro procesar", null);
+        }
+        return respuesta_envio_api( false, "ERROR_ASIGNAR_DOMINIO", "No se logro procesar", null);
     } catch (err) {
         throw new Error(err);
     }
@@ -712,6 +897,48 @@ module.exports = {
             const valores_usuario = req.user;
 
             const info = await asignar_billetera_movil(valores_datos, valores_usuario);
+            return res.json(info);
+        } catch (err) {
+            info = {
+                "bEstado": false,
+                "iCodigo": 0,
+                "sRpta": err.message,
+                "obj": []
+              }
+            console.log('[response error]', err.message);
+            return res.status(500).send(info);
+        }
+    },
+    async actualizar_billetera_movil_datos(valores_datos){
+        try {
+            const info = await actualizar_billetera_movil_datos(valores_datos);
+            return info;
+        } catch (err) {
+            throw new Exception(err);
+        }
+    },
+    async generar_pagos_billetera_movil(req, res){
+        try {
+            const valores_datos = req.body;
+
+            const info = await generar_pagos_billetera_movil(valores_datos);
+            return res.json(info);
+        } catch (err) {
+            info = {
+                "bEstado": false,
+                "iCodigo": 0,
+                "sRpta": err.message,
+                "obj": []
+              }
+            console.log('[response error]', err.message);
+            return res.status(500).send(info);
+        }
+    },
+    async generar_movimientos_comision_venta(req, res){
+        try {
+            const valores_datos = req.body;
+
+            const info = await generar_movimientos_comision_venta(valores_datos);
             return res.json(info);
         } catch (err) {
             info = {

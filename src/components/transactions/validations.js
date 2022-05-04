@@ -1,12 +1,11 @@
 const Joi = require("joi").extend(require('@joi/date'));
 
 const agregar_Schema = Joi.object().keys({
+    dominio: Joi.string().required(),
     tipo_movimiento: Joi.string().required().valid("egreso", "ingreso"),
     observacion: Joi.string().required(),
     motivo: Joi.string().required(),
-    moneda: Joi.string().required(),
-    monto: Joi.number().required().min(0),
-    monto_tipo_cambio: Joi.number().required().min(0)
+    monto: Joi.number().required().min(0)
 })
 const listar_fechas_Schema = Joi.object().keys({
     fecha_inicio: Joi.date().format("DD/MM/YYYY").required(),

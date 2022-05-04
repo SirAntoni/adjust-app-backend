@@ -57,19 +57,18 @@ const dominiosSchema = new Schema({
     unidad_medida_codigo: { type: String },
 
     billetera_movil: {
-        monto_cobro: { type: Number },
+        monto_cobrar: { type: Number },
         monto_alerta: { type: Number },
 
-        monto_total: { type: Number },
-        monto_pagado: { type: Number },
+        saldo: { type: Number },
 
         monto_porcentaje_venta: { type: Number },
 
         frecuencia: { type: String },
         frecuencia_numero: { type: Number },
 
-        fecha_cobro_inicial: { type: Number },
-        proximo_cobro: { type: Number },
+        fecha_cobro_inicial: { type: String },
+        proximo_cobro: { type: String },
         //usuario_asignado: { type: Schema.Types.ObjectId },
 
         //estado: { type: String }
