@@ -17,6 +17,10 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.use(helmet());
 
+
 app.use("/", router);
+app.get('/', function(req, res){
+    res.send("");
+});
 
 module.exports = app;

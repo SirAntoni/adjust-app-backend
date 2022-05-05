@@ -7,6 +7,8 @@ const controller = require("./controller");
 
 router.post("/registro", UserAuth, controller.asignar_dominio);
 
+router.get("/existe/:dominio", controller.existe_dominio);
+
 router.put("/billetera-movil", UserAuth, controller.asignar_billetera_movil);
 router.get("/billetera-movil/pagos", controller.generar_pagos_billetera_movil);
 

@@ -192,6 +192,7 @@ module.exports = {
             const version = Math.random() * (100 - 1) + 1;
             const path_plan_dominio = URL_CDN_STORAGE + DOMAIN_SYSTEM + "/js/planes-samishop/" + plan + ".json?version=" + version;
             let paginas_plan = await axios.get(path_plan_dominio);
+            
             paginas_plan = paginas_plan.data;
 
             return paginas_plan;

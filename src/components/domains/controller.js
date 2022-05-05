@@ -722,6 +722,24 @@ async function  generar_movimientos_comision_venta(valores_datos){
         throw new Error(err);
     }
 }
+
+async function existe_dominio(valores_datos){
+    try {
+        let { dominio } = valores_datos;
+        const datos_buscar = {
+            nombre: dominio
+        }
+
+        const existe_dominio = await dominioDao.existe_dominio(datos_buscar);
+
+        if(existe_dominio){
+            return respuesta_envio_api( true, "SUCCESS", "Se realizo correctamente", null);
+        }
+        return respuesta_envio_api( false, "ERROR_NO_EXISTE_DOMINIO", "No se logro procesar", null);
+    } catch (err) {
+        throw new Error(err);
+    }
+}
 module.exports = {
     async asignar_dominio(req, res){
         try {
@@ -740,12 +758,19 @@ module.exports = {
             return res.status(500).send(info);
         }
     },
-    async validar_paginas_dominio(valores, req){
+    async validar_paginas_dominio(req, req){
         try {
             const info = await validar_paginas_dominio(valores, req);
-            return info;
+            return res.json(info);
         } catch (err) {
-            throw new Error(err);
+            info = {
+                "bEstado": false,
+                "iCodigo": 0,
+                "sRpta": err.message,
+                "obj": []
+              }
+            console.log('[response error]', err.message);
+            return res.status(500).send(info);
         }
     },
 
@@ -939,6 +964,24 @@ module.exports = {
             const valores_datos = req.body;
 
             const info = await generar_movimientos_comision_venta(valores_datos);
+            return res.json(info);
+        } catch (err) {
+            info = {
+                "bEstado": false,
+                "iCodigo": 0,
+                "sRpta": err.message,
+                "obj": []
+              }
+            console.log('[response error]', err.message);
+            return res.status(500).send(info);
+        }
+    },
+
+    async existe_dominio(req, res){
+        try {
+            const valores_datos = req.params;
+
+            const info = await existe_dominio(valores_datos);
             return res.json(info);
         } catch (err) {
             info = {
