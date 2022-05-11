@@ -47,9 +47,9 @@ async function  asignar_dominio(valores){
         throw new Error(err);
     }
 }
-async function validar_paginas_dominio(valores, req){
+async function buscar_dominio(valores){
     try {
-        let { dominio, pagina } = valores;
+        let { dominio } = valores;
 
         dominio = dominio ? dominio.toLowerCase() : "";
         dominio = dominio.replace("www.", "");
@@ -60,39 +60,30 @@ async function validar_paginas_dominio(valores, req){
         const existe_dominio = await dominioDao.buscar_dominio(datos_encontrar_dominio);
 
         if(existe_dominio){
-            
-            
-
-            const plan = existe_dominio.plan;
-            const situacion = existe_dominio.situacion;
-
-            const auth_values = await auth_values_signature(req);
-            
-            if(auth_values === false){
-                return respuesta_envio_api( false, "ERROR_USUARIO_INVALIDO", "Usuario invalido", [{ situacion }]);
-            }
-
-            const { usuario_tipo } = req.user;
-            if(usuario_tipo != null && usuario_tipo == 2){
-                const datos_encontrar_paginas = {
-                    plan
-                }
-                const resultado_obtener_paginas_ = await dominioDao.obtener_paginas_dominio(datos_encontrar_paginas);
-    
-                const ExistingTrack = resultado_obtener_paginas_.filter(key => key == pagina);
-    
-                if(ExistingTrack.length != 0){
-                    return respuesta_envio_api( true, "SUCCESS", "Se verifico correctamente", [{ situacion }]);
-                }
-                return respuesta_envio_api( false, "ERROR_NO_EXISTE_PAGINA_VALIDA_PLAN", "No se logró encontrar al pagina valida", [{ situacion }]);
-            }
-            else{
-                return respuesta_envio_api( true, "SUCCESS", "Se verifico correctamente", [{ situacion }]);
-            }
+            return respuesta_envio_api( true, "SUCCESS", "Se verifico correctamente", existe_dominio);
         }
         else{
-            return respuesta_envio_api( false, "ERROR_NO_EXISTE_DOMINIO", "No se logró encontrar al dominio", []);
+            return respuesta_envio_api( false, "ERROR_NO_EXISTE_DOMINIO", "No se logró encontrar al dominio", null);
         }
+    } catch (err) {
+        throw new Error(err);
+    }
+}
+async function obtener_paginas_dominio(valores){
+    try {
+        let { pagina, plan } = valores;
+
+        const datos_encontrar_paginas = {
+            plan
+        }
+        const resultado_obtener_paginas_ = await dominioDao.obtener_paginas_dominio(datos_encontrar_paginas);
+
+        const ExistingTrack = resultado_obtener_paginas_.filter(key => key == pagina);
+
+        if(ExistingTrack.length != 0){
+            return respuesta_envio_api( true, "SUCCESS", "Se verifico correctamente", null);
+        }
+        return respuesta_envio_api( false, "ERROR_NO_EXISTE_PAGINA_VALIDA_PLAN", "No se logró encontrar al pagina valida", null);
     } catch (err) {
         throw new Error(err);
     }
@@ -758,22 +749,6 @@ module.exports = {
             return res.status(500).send(info);
         }
     },
-    async validar_paginas_dominio(req, req){
-        try {
-            const info = await validar_paginas_dominio(valores, req);
-            return res.json(info);
-        } catch (err) {
-            info = {
-                "bEstado": false,
-                "iCodigo": 0,
-                "sRpta": err.message,
-                "obj": []
-              }
-            console.log('[response error]', err.message);
-            return res.status(500).send(info);
-        }
-    },
-
     async obtener_perfil(req, res){
         try {
             const valores_usuario = req.user;
@@ -982,6 +957,40 @@ module.exports = {
             const valores_datos = req.params;
 
             const info = await existe_dominio(valores_datos);
+            return res.json(info);
+        } catch (err) {
+            info = {
+                "bEstado": false,
+                "iCodigo": 0,
+                "sRpta": err.message,
+                "obj": []
+              }
+            console.log('[response error]', err.message);
+            return res.status(500).send(info);
+        }
+    },
+    async buscar_dominio(req, res){
+        try {
+            const valores_datos = req.body;
+
+            const info = await buscar_dominio(valores_datos);
+            return res.json(info);
+        } catch (err) {
+            info = {
+                "bEstado": false,
+                "iCodigo": 0,
+                "sRpta": err.message,
+                "obj": []
+              }
+            console.log('[response error]', err.message);
+            return res.status(500).send(info);
+        }
+    },
+    async obtener_paginas_dominio(req, res){
+        try {
+            const valores_datos = req.body;
+
+            const info = await obtener_paginas_dominio(valores_datos);
             return res.json(info);
         } catch (err) {
             info = {

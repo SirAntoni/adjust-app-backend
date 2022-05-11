@@ -36,8 +36,13 @@ module.exports = {
     },
     async buscar_dominio(datos){
         try{
+            const datos_obtener = {
+                _id: 0,
+                plan: 1,
+                situacion: 1
+            }
             const { nombre } = datos;
-            const existe_dominio = await dominiosModel.findOne({ nombre });
+            const existe_dominio = await dominiosModel.findOne({ nombre }, datos_obtener).lean();
 
             return existe_dominio;
         }catch(err){
