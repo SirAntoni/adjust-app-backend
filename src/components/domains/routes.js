@@ -8,6 +8,7 @@ const controller = require("./controller");
 router.post("/registro", UserAuth, controller.asignar_dominio);
 
 router.get("/existe/:dominio", controller.existe_dominio);
+router.get("/obtener/nombres", controller.obtener_nombres_dominios);
 
 router.post("/dominio/buscar", controller.buscar_dominio);
 router.post("/dominio/paginas", controller.obtener_paginas_dominio);

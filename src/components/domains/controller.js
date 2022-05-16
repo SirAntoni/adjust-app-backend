@@ -731,6 +731,15 @@ async function existe_dominio(valores_datos){
         throw new Error(err);
     }
 }
+async function obtener_nombres_dominios(){
+    try {
+        let resultado_obtener_dominios = await dominioDao.obtener_nombres_dominios();
+        resultado_obtener_dominios = resultado_obtener_dominios.map(value => value.nombre);
+        return respuesta_envio_api( true, "SUCCESS", "Se realizo correctamente", resultado_obtener_dominios);
+    } catch (err) {
+        throw new Error(err);
+    }
+}
 module.exports = {
     async asignar_dominio(req, res){
         try {
@@ -957,6 +966,21 @@ module.exports = {
             const valores_datos = req.params;
 
             const info = await existe_dominio(valores_datos);
+            return res.json(info);
+        } catch (err) {
+            info = {
+                "bEstado": false,
+                "iCodigo": 0,
+                "sRpta": err.message,
+                "obj": []
+              }
+            console.log('[response error]', err.message);
+            return res.status(500).send(info);
+        }
+    },
+    async obtener_nombres_dominios(req, res){
+        try {
+            const info = await obtener_nombres_dominios();
             return res.json(info);
         } catch (err) {
             info = {

@@ -93,6 +93,19 @@ module.exports = {
             throw new Error(err);
         }
     },
+    async obtener_nombres_dominios(){
+        try{
+            const datos_obtener = {
+                _id: 0,
+                nombre: 1
+            };
+            const existe_dominio = await dominiosModel.find({}, datos_obtener).lean();
+
+            return existe_dominio;
+        }catch(err){
+            throw new Error(err);
+        }
+    },
     async existe_dominio_venta_dominio(datos_buscar){
         try{
             const datos_obtener = {
