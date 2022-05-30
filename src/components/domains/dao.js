@@ -39,7 +39,10 @@ module.exports = {
             const datos_obtener = {
                 _id: 0,
                 plan: 1,
-                situacion: 1
+                situacion: 1,
+                tipo: 1,
+                es_erp: 1,
+                envio_ordenes_correo: 1
             }
             const { nombre } = datos;
             const existe_dominio = await dominiosModel.findOne({ nombre }, datos_obtener).lean();
