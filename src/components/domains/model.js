@@ -15,6 +15,9 @@ const dominiosSchema = new Schema({
 
     es_erp: { type: Number },
     envio_ordenes_correo: { type: Number },
+    es_facturacion: { type: Number },
+    serie_factura: { type: String },
+    serie_boleta: { type: String },
 
     plan: { type: String },
 
