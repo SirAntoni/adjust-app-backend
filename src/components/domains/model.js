@@ -13,6 +13,10 @@ const dominiosSchema = new Schema({
 
     tipo_pago: { type: String },
 
+    es_erp: { type: Number },
+    envio_ordenes_correo: { type: Number },
+    es_facturacion: { type: Number },
+
     integraciones_externas: {
         es_erp: { type: Number },
         envio_ordenes_correo: { type: Number },
