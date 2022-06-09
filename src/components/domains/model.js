@@ -18,9 +18,9 @@ const dominiosSchema = new Schema({
     es_facturacion: { type: Number },
 
     integraciones_externas: {
-        es_erp: { type: Number },
-        envio_ordenes_correo: { type: Number },
-        es_facturacion: { type: Number },
+        es_erp: { type: Boolean },
+        envio_ordenes_correo: { type: Boolean },
+        es_facturacion: { type: Boolean },
 
         enviar_servicio_sap_zws_pcfvd: { type: Boolean },
         enviar_servicio_sap_zws_pcf: { type: Boolean }
