@@ -13,11 +13,14 @@ const dominiosSchema = new Schema({
 
     tipo_pago: { type: String },
 
-    es_erp: { type: Number },
-    envio_ordenes_correo: { type: Number },
-    es_facturacion: { type: Number },
-    serie_factura: { type: String },
-    serie_boleta: { type: String },
+    integraciones_externas: {
+        es_erp: { type: Number },
+        envio_ordenes_correo: { type: Number },
+        es_facturacion: { type: Number },
+
+        enviar_servicio_sap_zws_pcfvd: { type: Boolean },
+        enviar_servicio_sap_zws_pcf: { type: Boolean }
+    },
 
     plan: { type: String },
 

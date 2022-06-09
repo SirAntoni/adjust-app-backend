@@ -69,6 +69,29 @@ async function buscar_dominio(valores){
         throw new Error(err);
     }
 }
+async function buscar_dominio_integracion(valores){
+    try {
+        let { dominio, campos } = valores;
+
+        dominio = dominio ? dominio.toLowerCase() : "";
+        dominio = dominio.replace("www.", "");
+        const datos_encontrar_dominio = {
+            nombre: dominio,
+            situacion: ["activo", "parcial"]
+        }
+
+        const existe_dominio = await dominioDao.buscar_dominio_integracion(datos_encontrar_dominio, campos);
+
+        if(existe_dominio){
+            return respuesta_envio_api( true, "SUCCESS", "Se verifico correctamente", existe_dominio);
+        }
+        else{
+            return respuesta_envio_api( false, "ERROR_NO_EXISTE_DOMINIO", "No se logró encontrar al dominio", null);
+        }
+    } catch (err) {
+        throw new Error(err);
+    }
+}
 async function obtener_paginas_dominio(valores){
     try {
         let { pagina, plan } = valores;
@@ -998,6 +1021,23 @@ module.exports = {
             const valores_datos = req.body;
 
             const info = await buscar_dominio(valores_datos);
+            return res.json(info);
+        } catch (err) {
+            info = {
+                "bEstado": false,
+                "iCodigo": 0,
+                "sRpta": err.message,
+                "obj": []
+              }
+            console.log('[response error]', err.message);
+            return res.status(500).send(info);
+        }
+    },
+    async buscar_dominio_integracion(req, res){
+        try {
+            const valores_datos = req.body;
+
+            const info = await buscar_dominio_integracion(valores_datos);
             return res.json(info);
         } catch (err) {
             info = {

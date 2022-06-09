@@ -34,21 +34,31 @@ module.exports = {
             throw new Error(err);
         }
     },
-    async buscar_dominio(datos){
+    async buscar_dominio(datos_encontrar_dominio){
+        try{
+            const datos_obtener = {
+                _id: 0,
+                plan: 1,
+                situacion: 1,
+                tipo: 1
+            }
+            const existe_dominio = await dominiosModel.findOne(datos_encontrar_dominio, datos_obtener).lean();
+
+            return existe_dominio;
+        }catch(err){
+            throw new Error(err);
+        }
+    },
+    async buscar_dominio_integracion(datos_encontrar_dominio, campos){
         try{
             const datos_obtener = {
                 _id: 0,
                 plan: 1,
                 situacion: 1,
                 tipo: 1,
-                es_erp: 1,
-                envio_ordenes_correo: 1,
-                es_facturacion: 1,
-                serie_factura: 1,
-                serie_boleta: 1
+                integraciones_externas: campos
             }
-            const { nombre } = datos;
-            const existe_dominio = await dominiosModel.findOne({ nombre }, datos_obtener).lean();
+            const existe_dominio = await dominiosModel.findOne(datos_encontrar_dominio, datos_obtener).lean();
 
             return existe_dominio;
         }catch(err){

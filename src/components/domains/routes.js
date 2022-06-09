@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const  UserAuth = require('../middlewares/auth');
+const  system_auth = require('../middlewares/auth-public');
 
 const controller = require("./controller");
 
@@ -11,6 +12,7 @@ router.get("/existe/:dominio", controller.existe_dominio);
 router.get("/obtener/nombres", controller.obtener_nombres_dominios);
 
 router.post("/dominio/buscar", controller.buscar_dominio);
+router.post("/dominio/buscar-integracion", system_auth, controller.buscar_dominio_integracion);
 router.post("/dominio/paginas", controller.obtener_paginas_dominio);
 
 router.put("/billetera-movil", UserAuth, controller.asignar_billetera_movil);
