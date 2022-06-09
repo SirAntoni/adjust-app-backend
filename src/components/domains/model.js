@@ -22,8 +22,12 @@ const dominiosSchema = new Schema({
         envio_ordenes_correo: { type: Boolean },
         es_facturacion: { type: Boolean },
 
+        //clientes crosland
         enviar_servicio_sap_zws_pcfvd: { type: Boolean },
-        enviar_servicio_sap_zws_pcf: { type: Boolean }
+        enviar_servicio_sap_zws_pcf: { type: Boolean },
+
+        //clientes puigmx
+        enviar_servicio_sap_sales_order_svc: { type: Boolean }
     },
 
     plan: { type: String },
