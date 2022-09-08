@@ -109,6 +109,22 @@ module.exports = {
             throw new Error(err);
         }
     },
+    async obtener_dominios(){
+        try{
+            const datos_obtener = {
+                _id: 0,
+                nombre: 1,
+                nombre_comercial:1,
+                situacion: 1,
+                integraciones_externas: 1
+            };
+            const obtener_dominio = await dominiosModel.find({}, datos_obtener).lean();
+
+            return obtener_dominio;
+        }catch(err){
+            throw new Error(err);
+        }
+    },
     async obtener_nombres_dominios(){
         try{
             const datos_obtener = {

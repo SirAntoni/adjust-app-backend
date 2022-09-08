@@ -754,6 +754,14 @@ async function existe_dominio(valores_datos){
         throw new Error(err);
     }
 }
+async function obtener_dominios(){
+    try {
+        let resultado_obtener_dominios = await dominioDao.obtener_dominios();
+        return respuesta_envio_api( true, "SUCCESS", "Se realizo correctamente", resultado_obtener_dominios);
+    } catch (err) {
+        throw new Error(err);
+    }
+}
 async function obtener_nombres_dominios(){
     try {
         let resultado_obtener_dominios = await dominioDao.obtener_nombres_dominios();
@@ -989,6 +997,21 @@ module.exports = {
             const valores_datos = req.params;
 
             const info = await existe_dominio(valores_datos);
+            return res.json(info);
+        } catch (err) {
+            info = {
+                "bEstado": false,
+                "iCodigo": 0,
+                "sRpta": err.message,
+                "obj": []
+              }
+            console.log('[response error]', err.message);
+            return res.status(500).send(info);
+        }
+    },
+    async obtener_dominios(req, res){
+        try {
+            const info = await obtener_dominios();
             return res.json(info);
         } catch (err) {
             info = {
