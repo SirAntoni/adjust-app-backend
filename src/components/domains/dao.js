@@ -111,7 +111,15 @@ module.exports = {
     },
     async obtener_dominios(){
         try{
-            const obtener_dominio = await dominiosModel.find({}).lean();
+            const datos_obtener = {
+                _id: 1,
+                nombre: 1,
+                nombre_comercial: 1,
+                tipo:1,
+                situacion:1,
+                fecha_creacion:1
+            };
+            const obtener_dominio = await dominiosModel.find({}, datos_obtener).lean();
             return obtener_dominio;
         }catch(err){
             throw new Error(err);
