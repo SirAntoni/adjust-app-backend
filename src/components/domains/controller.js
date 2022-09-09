@@ -2,7 +2,7 @@ const dominioDao = require("./dao");
 const controlador_transacion = require("../transactions/controller");
 
 const { respuesta_envio_api } = require("../../utils/error");
-const { validar_asignar_perfil_contacto,validar_asignar_estado_dominio, validar_asignar_perfil_tienda, validar_asignar_idiomas_formatos_datos, validar_asignar_facturacion_datos, validar_asignar_perfil_facturacion, validar_asignar_billetera_movil } = require("./validations");
+const { validar_asignar_perfil_contacto,validar_asignar_estado_dominio,validar_asignar_plan_dominio, validar_asignar_perfil_tienda, validar_asignar_idiomas_formatos_datos, validar_asignar_facturacion_datos, validar_asignar_perfil_facturacion, validar_asignar_billetera_movil } = require("./validations");
 
 async function  asignar_dominio(valores){
     try {
@@ -246,6 +246,51 @@ async function asignar_estado_dominio(valores_datos, valores_usuario){
 
             const datos_actualizar_dominio = {
                 situacion: situacion,
+                usuario_modificacion: _id,
+                fecha_modificacion: fecha_generada
+            }
+
+            const resultado_asignar_dominio = await dominioDao.actualizar_dominio(datos_buscar_dominio, datos_actualizar_dominio);
+
+            if(resultado_asignar_dominio != false){
+                return respuesta_envio_api( true, "SUCCESS", "Se proceso correctamente", []);
+            }
+            return respuesta_envio_api( false, "ERROR_ASIGNAR_DOMINIO", "No se logro asignar los valores al dominio", []);
+        }
+        else{
+            return respuesta_envio_api( false, "ERROR_NO_EXISTE_DOMINIO", "El dominio no existe", []);
+        }
+    } catch (err) {
+        throw new Error(err);
+    }
+}
+async function asignar_plan_dominio(valores_datos, valores_usuario){
+    try {
+        const lsErrors = validar_asignar_plan_dominio(valores_datos);
+            
+        if (lsErrors.length != 0) return respuesta_envio_api( false, "ERROR_CAMPOS_INVALIDOS", "Los campos ingresados son invalidos", []);
+
+        const { _id } = valores_usuario;
+        const { dominio,plan } = valores_datos;
+
+        const datos_encontrar_dominio = {
+            nombre: dominio
+        }
+        
+        const existe_dominio = await dominioDao.buscar_existe_dominio(datos_encontrar_dominio);
+        
+        if(existe_dominio){
+            let { plan } = valores_datos;
+            plan = plan.trim();
+
+            const datos_buscar_dominio = {
+                _id: existe_dominio._id
+            }
+
+            const fecha_generada = new Date().toISOString();
+
+            const datos_actualizar_dominio = {
+                plan: plan,
                 usuario_modificacion: _id,
                 fecha_modificacion: fecha_generada
             }
@@ -872,6 +917,24 @@ module.exports = {
             const valores_usuario = req.user;
 
             const info = await asignar_estado_dominio(valores_datos, valores_usuario);
+            return res.json(info);
+        } catch (err) {
+            info = {
+                "bEstado": false,
+                "iCodigo": 0,
+                "sRpta": err.message,
+                "obj": []
+              }
+            console.log('[response error]', err.message);
+            return res.status(500).send(info);
+        }
+    },
+    async asignar_plan_dominio(req, res){
+        try {
+            const valores_datos = req.body;
+            const valores_usuario = req.user;
+
+            const info = await asignar_plan_dominio(valores_datos, valores_usuario);
             return res.json(info);
         } catch (err) {
             info = {

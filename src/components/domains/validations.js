@@ -11,6 +11,10 @@ const asignar_estado_dominioSchema = Joi.object().keys({
     dominio: Joi.string().required(),
     situacion: Joi.string().required(),
 })
+const asignar_plan_dominioSchema = Joi.object().keys({
+    dominio: Joi.string().required(),
+    plan: Joi.string().required(),
+})
 const asignar_perfil_facturacionSchema = Joi.object().keys({
     nombres: Joi.string().required().alphanum(),
     apellidos: Joi.string().required().alphanum(),
@@ -64,6 +68,13 @@ module.exports = {
     validar_asignar_estado_dominio(valores) {  
         let result = [];
         const validations = asignar_estado_dominioSchema.validate(valores, { abortEarly: false });        
+        if(validations.error && validations.error.details)
+            result = validations.error.details.map(x => x.message);        
+        return result;
+    },
+    validar_asignar_plan_dominio(valores) {  
+        let result = [];
+        const validations = asignar_plan_dominioSchema.validate(valores, { abortEarly: false });        
         if(validations.error && validations.error.details)
             result = validations.error.details.map(x => x.message);        
         return result;

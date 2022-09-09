@@ -14,7 +14,8 @@ router.get("/obtener/nombres", controller.obtener_nombres_dominios);
 router.post("/dominio/buscar", controller.buscar_dominio);
 router.post("/dominio/buscar-integracion", system_auth, controller.buscar_dominio_integracion);
 router.post("/dominio/paginas", controller.obtener_paginas_dominio);
-router.put("/", UserAuth, controller.asignar_estado_dominio);
+router.put("/dominio/situacion", UserAuth, controller.asignar_estado_dominio);
+router.put("/dominio/plan", UserAuth, controller.asignar_plan_dominio);
 
 router.put("/billetera-movil", UserAuth, controller.asignar_billetera_movil);
 router.get("/billetera-movil/pagos", controller.generar_pagos_billetera_movil);
