@@ -116,6 +116,7 @@ module.exports = {
                 nombre: 1,
                 nombre_comercial: 1,
                 tipo:1,
+                plan:1,
                 situacion:1,
                 fecha_creacion:1
             };

@@ -7,6 +7,10 @@ const asignar_perfil_contactoSchema = Joi.object().keys({
     telefono: Joi.string().required().max(20).pattern(/^[0-9]+$/),
     pais_codigo: Joi.string().required().alphanum().lowercase(),
 })
+const asignar_estado_dominioSchema = Joi.object().keys({
+    dominio: Joi.string().required(),
+    situacion: Joi.string().required(),
+})
 const asignar_perfil_facturacionSchema = Joi.object().keys({
     nombres: Joi.string().required().alphanum(),
     apellidos: Joi.string().required().alphanum(),
@@ -53,6 +57,13 @@ module.exports = {
     validar_asignar_perfil_contacto(valores) {  
         let result = [];
         const validations = asignar_perfil_contactoSchema.validate(valores, { abortEarly: false });        
+        if(validations.error && validations.error.details)
+            result = validations.error.details.map(x => x.message);        
+        return result;
+    },
+    validar_asignar_estado_dominio(valores) {  
+        let result = [];
+        const validations = asignar_estado_dominioSchema.validate(valores, { abortEarly: false });        
         if(validations.error && validations.error.details)
             result = validations.error.details.map(x => x.message);        
         return result;
