@@ -6,7 +6,7 @@ const  system_auth = require('../middlewares/auth-public');
 
 const controller = require("./controller");
 
-router.get("/", controller.obtener_planes);
-router.post("/", UserAuth, controller.crear_plan);
+router.get("/", controller.obtener_empresas);
+router.post("/", UserAuth, controller.crear_empresa);
 
 module.exports = router;
