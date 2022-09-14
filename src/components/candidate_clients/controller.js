@@ -23,7 +23,7 @@ async function crear_cliente_candidato(valores) {
             codigo_validacion,
             dominio,
             correo,
-            estado: "inactivo",
+            estado: "activo",
             fecha_creacion: fecha_generada,
             fecha_modificacion: fecha_generada
         }
