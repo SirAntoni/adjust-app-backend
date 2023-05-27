@@ -1,10 +1,8 @@
 const express = require("express")
 const router = express.Router();
 
-const enterprisesRouter = require("../components/enterprises/routes");
-const candidatesClientsRouter = require("../components/candidate_clients/routes");
+const apiRouter = require("../components/api/routes");
 
-router.use("/enterprises", enterprisesRouter);
-router.use("/candidate_clients", candidatesClientsRouter);
+router.use("/api", apiRouter);
 
 module.exports = router;

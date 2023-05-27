@@ -2,7 +2,7 @@ const express = require('express')
 const router = require('./routes')
 const helmet = require('helmet')
 const cors = require('cors')
-require('./db.js')
+//require('./db.js')
 
 const app = express()
 

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+/*const mongoose = require('mongoose')
 
 ;(async () => {
   try {
@@ -12,3 +12,4 @@ const mongoose = require('mongoose')
     console.log(err)
   }
 })()
+*/
