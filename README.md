@@ -1,4 +1,4 @@
-# Samishop API Backoffice v0 Dominios
+# ADJUST APP - APIS V0
 
 ## 🚀 Project Structure
 
@@ -41,10 +41,6 @@ Node version 16
 - `NODE_ENV`: Entorno de ejecucion de Node.js. Ejemplo: `development`
 - `MONGODB_URI`: URL para acceder a MongoDB. Ejemplo: `mongodb+srv://<user>:<password>@<url>/test?retryWrites=true&w=majority`
 - `PORT`: Puerto del servicio. Ejemplo: `5000`
-- `API_AUTH`: URL de para la autenticacion. Ejemplo: `https://api-autenticacion.samishop.pe/`
-- `URL_CDN_STORAGE`: URL del storage. Ejemplo: `https://storage.googleapis.com/sspe-appv20-resources/`
-- `DOMAIN_SYSTEM`: Dominio de Samishop. Ejemplo: `sami3.samishop.pe`
-- `TOKEN_EXTERNAL`: Token de la API. Ejemplo: `$TOKEN_EXTERNAL`
 
 
 ## 📚 How to use
