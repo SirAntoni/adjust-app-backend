@@ -6,7 +6,7 @@ const crear_modeloSchema = Joi.object().keys({
 })
 
 const obtener_modeloSchema = Joi.object().keys({
-  uuid: Joi.string().required()
+  marca: Joi.string().required()
 })
 
 const actualizar_modeloSchema = Joi.object().keys({

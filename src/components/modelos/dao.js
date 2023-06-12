@@ -24,7 +24,7 @@ module.exports = {
   },
   async obtener_modelo(datos_buscar, datos_obtener) {
     try {
-      const resultado = modelosModel.findOne(datos_buscar, datos_obtener)
+      const resultado = modelosModel.find(datos_buscar, datos_obtener)
 
       return resultado
     } catch (err) {

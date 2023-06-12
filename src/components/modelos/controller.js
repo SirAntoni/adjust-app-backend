@@ -69,9 +69,9 @@ async function obtener_modelo(data){
 
         if(lsErrors.length != 0) return respuesta_envio_api(false, 'ERROR_CAMPOS_INVALIDOS', 'Los campos ingresados son invalidos', []);
 
-        const {uuid} = data;
+        const {marca}= data;
 
-        const datos_buscar = { uuid };
+        const datos_buscar = { marca };
 
         const datos_obtener = {
             _id: 0,

@@ -45,7 +45,8 @@ async function obtener_marcas(data){
 
         if(!resultado) return respuesta_envio_api(false, 'SUCCESS', 'No se encontraron datos', [])
 
-        return respuesta_envio_api(true, 'SUCCESS', 'Se realizo correctamente', resultado)
+        //return respuesta_envio_api(true, 'SUCCESS', 'Se realizo correctamente', resultado)
+        return resultado;
 
     }catch(err){
         throw new Error(err);
